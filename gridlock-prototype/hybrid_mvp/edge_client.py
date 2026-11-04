@@ -167,7 +167,7 @@ def load_helmet_model(device: str):
         print(f"[INFO] Helmet model classes: {hmodel.names}")
         no_helmet_ids = {
             cid for cid, name in hmodel.names.items()
-            if any(kw in name.lower() for kw in ["no_helmet", "no-helmet", "without", "bare", "no helmet"])
+            if any(kw in name.lower() for kw in    ["nohelmet", "no_helmet", "no-helmet", "without", "bare", "no helmet"])
         }
         helmet_ids = {
             cid for cid, name in hmodel.names.items()

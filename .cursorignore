@@ -1,0 +1,10 @@
+venv/
+.venv/
+node_modules/
+*.mp4
+*.avi
+*.pt
+*.db
+__pycache__/
+dist/
+build/
