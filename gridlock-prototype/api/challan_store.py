@@ -173,4 +173,10 @@ def get_challan(challan_id: str):
     return _row_to_record(row) if row else None
 
 
+def delete_all_challans() -> int:
+    """Delete every challan. Returns how many rows were removed."""
+    with get_connection() as conn:
+        cur = conn.execute("DELETE FROM challans")
+        return cur.rowcount
+
 init_challan_db()

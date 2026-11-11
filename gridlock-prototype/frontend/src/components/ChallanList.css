@@ -1,0 +1,52 @@
+.challan-section { padding: 4px 0 0; }
+.challan-head {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 18px;
+}
+.challan-title { margin: 0; font-size: 18px; font-weight: 700; color: #0f172a; }
+.challan-sub { margin: 4px 0 0; font-size: 13px; color: #64748b; }
+.challan-msg { color: #94a3b8; text-align: center; padding: 28px 0; }
+.challan-count { font-size: 13px; color: #64748b; margin: 0 0 12px; }
+.challan-error {
+  color: #b91c1c; background: #fee2e2; border: 1px solid #fecaca;
+  padding: 10px 14px; border-radius: 10px; font-size: 13px;
+}
+
+.btn-refresh, .btn-pdf {
+  display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+  font-weight: 600; font-size: 12px; border: none; color: #fff;
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  padding: 9px 14px; border-radius: 10px;
+}
+.btn-pdf { padding: 7px 12px; }
+.btn-refresh:hover, .btn-pdf:hover:not(:disabled) { filter: brightness(1.08); }
+
+.challan-table-wrap {
+  overflow-x: auto; border: 1px solid var(--line); border-radius: 12px;
+}
+.challan-table { width: 100%; min-width: 750px; border-collapse: separate; border-spacing: 0; }
+.challan-table th { padding: 12px 14px; text-align: left; font-size: 11px; color: #fff; }
+.challan-table td {
+  padding: 12px 14px; font-size: 13px; white-space: nowrap;
+  border-bottom: 1px solid var(--line);
+}
+.challan-table tbody tr:last-child td { border-bottom: none; }
+.challan-table tbody tr:hover { background: rgba(59,130,246,.06); }
+
+.spin { animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.btn-danger, .btn-ghost {
+  display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+  font-weight: 600; font-size: 12px; padding: 9px 14px; border-radius: 10px;
+}
+.btn-danger { border: none; color: #fff; background: linear-gradient(135deg, #ef4444, #dc2626); }
+.btn-danger:hover:not(:disabled) { filter: brightness(1.08); }
+.btn-danger:disabled { opacity: .45; cursor: not-allowed; }
+.btn-ghost { background: transparent; border: 1px solid var(--line); color: #475569; }
+.confirm-box {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  font-size: 13px; color: #b91c1c; font-weight: 600;
+  background: #fee2e2; border: 1px solid #fecaca;
+  padding: 6px 8px 6px 14px; border-radius: 12px;
+}

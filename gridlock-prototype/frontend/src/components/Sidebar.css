@@ -1,0 +1,102 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-shell {
+  flex: 1;
+  display: flex;
+}
+
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: #1b365d;
+  padding: 24px 0;
+}
+
+.side-link {
+  display: block;
+  padding: 12px 24px;
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-left: 3px solid transparent;
+  outline: none;
+}
+
+.side-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.side-link.active {
+  color: #fff;
+  border-left-color: #3b82f6;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.app-container > :first-child {
+  flex-shrink: 0;
+}
+
+.app-container .app-shell .main-content {
+  flex: 1;
+  min-width: 0;
+  max-width: none;
+  width: auto;
+  margin: 0;
+  background: #eef2f7;
+  padding: 24px 48px;
+}
+
+div.app-container {
+  height: 100vh;
+  overflow: hidden;
+}
+
+div.app-container .app-shell {
+  flex: 1;
+  min-height: 0;
+}
+
+div.app-container .app-shell .main-content {
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.sidebar { background: #0b1220; border-right: 1px solid rgba(255,255,255,0.06); }
+
+.side-link {
+  position: relative; display: flex; align-items: center; gap: 12px;
+  margin: 4px 12px; padding: 11px 14px; border-radius: 10px;
+  border-left: none; transition: color .2s, transform .2s;
+}
+.side-link:hover { background: transparent; color: #fff; transform: translateX(3px); }
+.side-link.active { background: transparent; border-left: none; }
+.nav-pill {
+  position: absolute; inset: 0; border-radius: 10px;
+  background: linear-gradient(90deg, rgba(59,130,246,.35), rgba(59,130,246,.08));
+  box-shadow: inset 0 0 0 1px rgba(59,130,246,.45);
+}
+.nav-icon, .nav-label { position: relative; z-index: 1; }
+
+.sidebar { overflow: hidden; white-space: nowrap; }
+.sidebar-inner { width: 220px; }
+
+.sidebar-toggle {
+  position: fixed; top: 12px; left: 20px; z-index: 100;
+  width: 36px; height: 36px; display: grid; place-items: center;
+  border: 1px solid rgba(255,255,255,0.15); border-radius: 10px;
+  background: rgba(255,255,255,0.06); color: #fff; cursor: pointer;
+  transition: background .2s, transform .2s;
+}
+.sidebar-toggle:hover { background: rgba(255,255,255,0.14); transform: scale(1.05); }
+
+@media (max-width: 768px) {
+  .sidebar { position: fixed; top: 56px; bottom: 0; left: 0; z-index: 50; }
+}

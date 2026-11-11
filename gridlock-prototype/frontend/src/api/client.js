@@ -246,3 +246,16 @@ export async function downloadChallanPdf(challanId) {
 
   URL.revokeObjectURL(url);
 }
+
+
+export async function deleteAllChallans() {
+  const response = await fetch(`${API_BASE}/challans`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to delete challans');
+  }
+
+  return response.json();
+}

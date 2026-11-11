@@ -1,12 +1,15 @@
-
 import React, { useCallback, useEffect, useState } from "react";
-import { fetchChallans, downloadChallanPdf } from "../api/client";
+import { FileDown, Loader2, Trash2 } from "lucide-react";
+import { fetchChallans, downloadChallanPdf, deleteAllChallans } from "../api/client";
+import "./ChallanList.css";
 
 export default function ChallanList() {
   const [challans, setChallans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [downloadingId, setDownloadingId] = useState("");
+  const [confirming, setConfirming] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const loadChallans = useCallback(async () => {
     try {
@@ -36,126 +39,108 @@ export default function ChallanList() {
     }
   }
 
-  const cellStyle = {
-    padding: "12px",
-    borderBottom: "1px solid #e2e8f0",
-    textAlign: "left",
-    fontSize: "13px",
-    whiteSpace: "nowrap",
-  };
-
-  const buttonStyle = {
-    padding: "8px 12px",
-    border: "none",
-    borderRadius: "6px",
-    background: "#0f766e",
-    color: "#ffffff",
-    cursor: "pointer",
-    fontWeight: 600,
-  };
+  async function handleDeleteAll() {
+    try {
+      setDeleting(true);
+      setError("");
+      await deleteAllChallans();
+      setChallans([]);
+    } catch (err) {
+      setError(err.message || "Delete failed.");
+    } finally {
+      setDeleting(false);
+      setConfirming(false);
+    }
+  }
 
   return (
-    <section style={{ padding: "20px", color: "inherit" }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: "12px",
-          flexWrap: "wrap",
-          marginBottom: "16px",
-        }}
-      >
+    <section className="challan-section">
+      <div className="challan-head">
         <div>
-          <h2 style={{ margin: 0 }}>E-Challan Records</h2>
-          <p style={{ marginTop: "6px", opacity: 0.7 }}>
+          <h2 className="challan-title">E-Challan Records</h2>
+          <p className="challan-sub">
             Saved traffic violations and downloadable draft challans
           </p>
         </div>
 
-        <button style={buttonStyle} onClick={loadChallans}>
-          Refresh
-        </button>
+        {!confirming ? (
+          <button
+            className="btn-danger"
+            disabled={challans.length === 0}
+            onClick={() => setConfirming(true)}
+          >
+            <Trash2 size={14} /> Delete All
+          </button>
+        ) : (
+          <div className="confirm-box">
+            <span>Delete all {challans.length} challans?</span>
+            <button className="btn-danger" disabled={deleting} onClick={handleDeleteAll}>
+              {deleting ? <Loader2 size={14} className="spin" /> : "Yes, delete"}
+            </button>
+            <button className="btn-ghost" onClick={() => setConfirming(false)}>
+              Cancel
+            </button>
+          </div>
+        )}
       </div>
 
-      {error && (
-        <p role="alert" style={{ color: "#dc2626" }}>
-          {error}
-        </p>
-      )}
+      {error && <p role="alert" className="challan-error">{error}</p>}
 
       {loading ? (
-        <p>Loading challans...</p>
+        <p className="challan-msg">Loading challans...</p>
       ) : challans.length === 0 ? (
-        <p>No challans found yet. Detect a traffic violation first.</p>
+        <p className="challan-msg">No challans found yet. Detect a traffic violation first.</p>
       ) : (
         <>
-          <p style={{ opacity: 0.75 }}>
+          <p className="challan-count">
             Total challans: <strong>{challans.length}</strong>
           </p>
 
-          <div style={{ overflowX: "auto", width: "100%" }}>
-            <table
-              style={{
-                width: "100%",
-                borderCollapse: "collapse",
-                minWidth: "750px",
-              }}
-            >
+          <div className="challan-table-wrap">
+            <table className="challan-table">
               <thead>
-                <tr style={{ background: "rgba(148, 163, 184, 0.12)" }}>
-                  <th style={cellStyle}>Challan ID</th>
-                  <th style={cellStyle}>Plate Number</th>
-                  <th style={cellStyle}>Violation</th>
-                  <th style={cellStyle}>Time</th>
-                  <th style={cellStyle}>Status</th>
-                  <th style={cellStyle}>PDF</th>
+                <tr>
+                  <th>Challan ID</th>
+                  <th>Plate Number</th>
+                  <th>Violation</th>
+                  <th>Time</th>
+                  <th>Status</th>
+                  <th>PDF</th>
                 </tr>
               </thead>
-
               <tbody>
-                {challans.map((challan) => (
-                  <tr key={challan.challan_id}>
-                    <td style={cellStyle}>{challan.challan_id}</td>
-                    <td style={cellStyle}>
-                      {challan.plate_number || "UNKNOWN"}
-                    </td>
-                    <td style={cellStyle}>{challan.violation_type}</td>
-                    <td style={cellStyle}>
-                      {challan.violation_time || "N/A"}
-                    </td>
-                    <td style={cellStyle}>
-                      <span
-                        style={{
-                          fontWeight: 600,
-                          color:
-                            challan.status === "DRAFT"
-                              ? "#0f766e"
-                              : "#b45309",
-                        }}
-                      >
-                        {challan.status}
-                      </span>
-                    </td>
-                    <td style={cellStyle}>
-                      <button
-                        style={{
-                          ...buttonStyle,
-                          opacity:
-                            downloadingId === challan.challan_id ? 0.6 : 1,
-                        }}
-                        disabled={downloadingId === challan.challan_id}
-                        onClick={() =>
-                          handleDownload(challan.challan_id)
-                        }
-                      >
-                        {downloadingId === challan.challan_id
-                          ? "Downloading..."
-                          : "Download PDF"}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {challans.map((c) => {
+                  const busy = downloadingId === c.challan_id;
+                  return (
+                    <tr key={c.challan_id}>
+                      <td className="mono">{c.challan_id}</td>
+                      <td>
+                        <span className="plate-tag mono">{c.plate_number || "UNKNOWN"}</span>
+                      </td>
+                      <td>
+                        <span className={`type-pill pill-${(c.violation_type || "").toLowerCase()}`}>
+                          {(c.violation_type || "").replace(/_/g, " ")}
+                        </span>
+                      </td>
+                      <td className="mono">{c.violation_time || "N/A"}</td>
+                      <td>
+                        <span className={`status-pill ${c.status === "DRAFT" ? "st-draft" : "st-other"}`}>
+                          {c.status}
+                        </span>
+                      </td>
+                      <td>
+                        <button
+                          className="btn-pdf"
+                          disabled={busy}
+                          onClick={() => handleDownload(c.challan_id)}
+                        >
+                          {busy ? <Loader2 size={14} className="spin" /> : <FileDown size={14} />}
+                          {busy ? "Downloading" : "PDF"}
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

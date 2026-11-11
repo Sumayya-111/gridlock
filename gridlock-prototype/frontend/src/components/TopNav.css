@@ -24,15 +24,9 @@
   gap: 12px;
 }
 
-.brand-logo {
-  font-size: 16px;
-  font-weight: 700;
-  color: #FFFFFF;
-  letter-spacing: 2px;
-}
 
 .brand-subtext {
-  font-size: 11px;
+  font-size: 15px;
   color: rgba(255, 255, 255, 0.7);
   letter-spacing: 0.5px;
   padding-left: 12px;
@@ -209,4 +203,27 @@
     background-color: rgba(255, 255, 255, 0.05);
     border-left: 4px solid var(--accent-primary);
   }
+}
+  .topnav-simple { display: flex; align-items: center; justify-content: space-between; }
+  .topnav-simple .topnav-brand { margin-left: 56px; }
+  .topnav-simple .topnav-status { display: flex !important; }
+
+  .topnav-brand { display: flex; align-items: center; gap: 12px; }
+
+.brand-logo-tile {
+  width: 42px; height: 42px; flex-shrink: 0;
+  display: grid; place-items: center;
+  background: linear-gradient(145deg, #ffffff, #dbeafe);
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.25), 0 4px 14px rgba(59,130,246,.35);
+}
+.brand-logo-img { width: 30px; height: 30px; object-fit: contain; display: block; }
+
+.topnav-brand .brand-subtext {
+  border-left: none !important;
+  padding-left: 0 !important;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  color: #e2e8f0;
 }

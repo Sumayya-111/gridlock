@@ -3,6 +3,7 @@ import { readPlate } from '../api/client';
 import EvidenceRecord from './EvidenceRecord';
 import ChallanList from './ChallanList';
 import './ViolationLog.css';
+import { Download, Upload, Inbox } from 'lucide-react';
 
 export default function ViolationLog({ violations, onClear }) {
   const [alprFile, setAlprFile] = useState(null);
@@ -13,16 +14,16 @@ export default function ViolationLog({ violations, onClear }) {
 
   const exportCSV = () => {
     if (violations.length === 0) return;
-    
+
     const headers = ['Type', 'Plate', 'Confidence', 'Frame', 'Time'];
-    const rows = violations.slice(0, 50).map(v => 
+    const rows = violations.slice(0, 50).map(v =>
       [v.violation_type, v.plate_text, v.confidence.toFixed(2), v.frame_id, v.timestamp]
     );
-    
-    const csvContent = "data:text/csv;charset=utf-8," 
-      + headers.join(",") + "\n" 
+
+    const csvContent = "data:text/csv;charset=utf-8,"
+      + headers.join(",") + "\n"
       + rows.map(e => e.join(",")).join("\n");
-      
+
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -35,13 +36,13 @@ export default function ViolationLog({ violations, onClear }) {
   const handleAlprUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    
+
     setAlprFile(file);
     setPreviewUrl(URL.createObjectURL(file));
     setAlprLoading(true);
     setAlprError(null);
     setAlprResult(null);
-    
+
     try {
       const res = await readPlate(file);
       setAlprResult(res);
@@ -52,7 +53,6 @@ export default function ViolationLog({ violations, onClear }) {
     }
   };
 
-  
   return (
     <div className="violation-log-container">
       <div className="log-section">
@@ -63,7 +63,7 @@ export default function ViolationLog({ violations, onClear }) {
             onClick={exportCSV}
             disabled={violations.length === 0}
           >
-            EXPORT CSV
+            <Download size={14} /> EXPORT CSV
           </button>
         </div>
 
@@ -81,7 +81,8 @@ export default function ViolationLog({ violations, onClear }) {
               {violations.length === 0 ? (
                 <tr>
                   <td colSpan="4" className="empty-cell">
-                    No violations logged yet
+                    <Inbox size={28} style={{ opacity: 0.4 }} />
+                    <div>No violations logged yet</div>
                   </td>
                 </tr>
               ) : (
@@ -97,11 +98,7 @@ export default function ViolationLog({ violations, onClear }) {
                   };
 
                   return (
-                    <EvidenceRecord
-                      key={i}
-                      record={record}
-                      variant="compact"
-                    />
+                    <EvidenceRecord key={i} record={record} variant="compact" />
                   );
                 })
               )}
@@ -117,7 +114,7 @@ export default function ViolationLog({ violations, onClear }) {
           <div className="alpr-title govt-badge">ALPR Quick Test</div>
 
           <label className="btn-upload">
-            SELECT CROP
+            <Upload size={14} /> SELECT CROP
             <input
               type="file"
               accept="image/*"
@@ -127,52 +124,30 @@ export default function ViolationLog({ violations, onClear }) {
           </label>
         </div>
 
-        {alprLoading && (
-          <div className="alpr-msg">Analyzing plate data...</div>
-        )}
+        {alprLoading && <div className="alpr-msg">Analyzing plate data...</div>}
 
-        {alprError && (
-          <div className="alpr-msg error">{alprError}</div>
-        )}
+        {alprError && <div className="alpr-msg error">{alprError}</div>}
 
         {previewUrl && alprResult && (
           <div className="alpr-result">
             <div className="alpr-img-wrapper">
-              <img
-                src={previewUrl}
-                alt="Crop"
-                className="alpr-preview"
-              />
+              <img src={previewUrl} alt="Crop" className="alpr-preview" />
             </div>
 
             <div className="alpr-details">
               <div className="detail-row">
                 <span className="detail-label">RAW</span>
-                <span className="detail-val mono">
-                  {alprResult.raw_text}
-                </span>
+                <span className="detail-val mono">{alprResult.raw_text}</span>
               </div>
 
               <div className="detail-row">
                 <span className="detail-label">PLATE</span>
                 <div className="plate-dossier-tag">
                   <span
-                    className={`status-dot ${
-                      alprResult.plate_valid ? "valid" : "invalid"
-                    }`}
-                    title={
-                      alprResult.plate_valid
-                        ? "Clean Read"
-                        : "Partial Read"
-                    }
+                    className={`status-dot ${alprResult.plate_valid ? "valid" : "invalid"}`}
+                    title={alprResult.plate_valid ? "Clean Read" : "Partial Read"}
                   />
-                  <span
-                    className={
-                      alprResult.plate_valid
-                        ? "mono highlight-val"
-                        : "mono text-muted"
-                    }
-                  >
+                  <span className={alprResult.plate_valid ? "mono highlight-val" : "mono text-muted"}>
                     {alprResult.plate_number}
                   </span>
                 </div>

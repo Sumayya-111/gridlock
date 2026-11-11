@@ -20,17 +20,21 @@ export default function EvidenceRecord({ record, variant = 'compact' }) {
   };
 
   const isFull = variant === 'full';
+  const hasPlate =
+    record.plateText &&
+    record.plateText !== 'UNKNOWN' &&
+    record.plateText !== 'UNREADABLE';
 
   return (
     <tr className="evidence-row">
       {isFull && (
         <td className="er-cell-image">
           {record.imageUrl ? (
-            <img 
-              src={record.imageUrl} 
-              alt="Evidence" 
-              className="er-thumb" 
-              loading="lazy" 
+            <img
+              src={record.imageUrl}
+              alt="Evidence"
+              className="er-thumb"
+              loading="lazy"
               onClick={() => window.open(record.imageUrl, '_blank', 'noopener,noreferrer')}
               title="Click to view full image"
             />
@@ -39,22 +43,29 @@ export default function EvidenceRecord({ record, variant = 'compact' }) {
           )}
         </td>
       )}
-      <td className="er-cell-type govt-badge status-confirmed">
-        {formatType(record.type)}
+
+      <td className="er-cell-type">
+        <span className={`type-pill pill-${(record.type || 'unknown').toLowerCase()}`}>
+          {formatType(record.type)}
+        </span>
       </td>
-      <td className="er-cell-plate mono">
-        {record.plateText && record.plateText !== 'UNKNOWN' && record.plateText !== 'UNREADABLE'
-          ? record.plateText
-          : <span className="text-secondary">—</span>}
+
+      <td className="er-cell-plate">
+        {hasPlate ? (
+          <span className="plate-tag mono">{record.plateText}</span>
+        ) : (
+          <span className="text-secondary">—</span>
+        )}
       </td>
+
       {isFull && (
         <td className="er-cell-conf mono">
           {record.confidence !== undefined ? `${(record.confidence * 100).toFixed(1)}%` : '—'}
         </td>
       )}
-      <td className="er-cell-time mono">
-        {formatTime(record.timestamp)}
-      </td>
+
+      <td className="er-cell-time mono">{formatTime(record.timestamp)}</td>
+
       <td className="er-cell-frame mono text-secondary">
         {record.frameId !== undefined && record.frameId !== null ? `f${record.frameId}` : '—'}
       </td>

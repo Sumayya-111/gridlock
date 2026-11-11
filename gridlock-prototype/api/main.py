@@ -65,6 +65,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+
 import cv2
 import numpy as np
 from fastapi import (
@@ -74,6 +75,7 @@ from fastapi import (
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+
 # ─── App setup ────────────────────────────────────────────────────────────────
 
 app = FastAPI(
@@ -81,6 +83,8 @@ app = FastAPI(
     version="1.0.0",
     description="YOLOv8 + PaddleOCR violation detection REST and WebSocket API",
 )
+
+
 
 _origins = [
     "http://localhost:5173",   # Vite dev server
@@ -103,6 +107,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # ─── GPU auto-detection ───────────────────────────────────────────────────────
 
@@ -1904,6 +1909,16 @@ async def download_challan_pdf(challan_id: str):
         },
     )
 
+
+@app.delete("/challans", tags=["E-Challan"])
+async def delete_all_challans_route():
+    """Delete all stored e-challans."""
+    try:
+        from api.challan_store import delete_all_challans
+        deleted = delete_all_challans()
+        return {"status": "cleared", "deleted": deleted}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Could not delete challans: {exc}")
 
 # POST /detect/image
 @app.post("/detect/image", response_model=DetectImageResponse, tags=["Detection"])
